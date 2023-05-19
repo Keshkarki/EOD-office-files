@@ -1,0 +1,30 @@
+If closing value> closing moving average value  ==> Buy
+if closing value < closing moving average value ==> Sell
+
+closing price is higher than avg price mean upward trend buy then else sell
+Inspire@#$2021
+============================================
+
+#github id
+id - keshavkarki140@gmail.com
+pass - Karki2@619
+Keshkarki
+
+git config --global user.name "Kebro"
+git config --global user.email "kkarki1998@gmail.com"
+git remote -v
+
+git config --global user.name "Keshav"
+git config --global user.email "keshavkarki140"@gmail.com"
+
+git remote add origin https://github.com/Kebro619/office-daily.git
+git branch -M master
+git push -u origin master
+
+==================================================================
+Task
+1- Webscaping using Selenium
+2- common drive
+
+
+C:\keshav\Navneet\Options_data\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\NIFTY & BANKNIFTY Options (Jan 2020 to 19 Dec 2022)\2022\BANKNIFTY Options
