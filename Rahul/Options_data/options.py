@@ -140,7 +140,7 @@ pe_symbol = f"{pe_symbol}"
 # print(pe_symbol)
 
 
-# reading files in folder
+# reading options
 rel_CE_df = pd.read_csv(f"C:\\keshav\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Options (Jan 2020 to 19 Dec 2022)\\{datestr}\\{underlying} Options\\{ce_symbol}.csv",header=None, usecols=[0, 1, 2, 3, 4, 5], names=['CEdate', 'CEtime', 'CEopen', 'CEhigh', 'CElow', 'CEclose'])
 rel_CE_df['CEdate'] = pd.to_datetime(rel_CE_df['CEdate'],format='%Y%m%d').dt.date
 rel_CE_df['CEdate'] = pd.to_datetime(rel_CE_df['CEdate'])
