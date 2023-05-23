@@ -18,9 +18,9 @@ underlyingStrikeDiff = 100 if underlying == 'BANKNIFTY' else 50
 OTM_points = 100
 
 #Part1 -Creating main dataframe ##########################################################
-df = pd.read_csv("C:\\keshav\\Rahul\\BankniftyNifty\\Weekly_exp_dates.csv",usecols=['Exp_date'])
+# df = pd.read_csv("C:\\keshav\\Rahul\\BankniftyNifty\\Weekly_exp_dates.csv",usecols=['Exp_date'])
 
-# df = pd.read_csv("C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\Rahul\\BankniftyNifty\\Weekly_exp_dates.csv",usecols=['Exp_date'])
+df = pd.read_csv("C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\Rahul\\BankniftyNifty\\Weekly_exp_dates.csv",usecols=['Exp_date'])
 
 df['expDateDt'] = pd.to_datetime(df['Exp_date'],format='%d-%b-%y')
 
@@ -35,9 +35,9 @@ df = df[['expDateDt', 'date','time']]
 
 
 #Part2- Banknifty DAtaframe ###################################################################
-df2 = pd.read_csv(f"C:\\keshav\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Spot Indices (Jan 2020 to 19 Dec 2022)\\{underlying}.csv",header=None)
+# df2 = pd.read_csv(f"C:\\keshav\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Spot Indices (Jan 2020 to 19 Dec 2022)\\{underlying}.csv",header=None)
 
-# df2= pd.read_csv(f"C:\\Users\\kkark\\oneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Spot Indices (Jan 2020 to 19 Dec 2022)\\{underlying}.csv",header=None)
+df2= pd.read_csv(f"C:\\Users\\kkark\\oneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Spot Indices (Jan 2020 to 19 Dec 2022)\\{underlying}.csv",header=None)
 
 df2.rename(columns={
                     0   : 'date',
@@ -100,7 +100,9 @@ def process_option_data(symbol,option_type):
         dt = row.name
 
         try:
-            option_df2 = pd.read_csv(f"C:\\keshav\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Options (Jan 2020 to 19 Dec 2022)\\{option_year}\\{underlying} Options\\{option_symbol}.csv", header=None, usecols=[0, 1, 2, 3, 4, 5], names=[f'{option_type}date', f'{option_type}time', f'{option_type}open', f'{option_type}high', f'{option_type}low', f'{option_type}close'])
+
+            option_df2 = pd.read_csv(f"C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Options (Jan 2020 to 19 Dec 2022)\\{option_year}\\{underlying} Options\\{option_symbol}.csv", header=None, usecols=[0, 1, 2, 3, 4, 5], names=[f'{option_type}date', f'{option_type}time', f'{option_type}open', f'{option_type}high', f'{option_type}low', f'{option_type}close'])
+
 
             option_df2[f'{option_type}date'] = pd.to_datetime(option_df2[f'{option_type}date'], format='%Y%m%d').dt.date.astype(str)
             option_df2['datetime'] = option_df2[f'{option_type}date'] + ' ' + option_df2[f'{option_type}time']
@@ -179,7 +181,9 @@ def process_option_data_exit(symbol,option_type):
         dt = df['exitDt'][i]
 
         try:
-            option_df2 = pd.read_csv(f"C:\\keshav\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Options (Jan 2020 to 19 Dec 2022)\\{option_year}\\{underlying} Options\\{option_symbol}.csv", header=None, usecols=[0, 1, 2, 3, 4, 5], names=[f'{option_type}date', f'{option_type}time', f'{option_type}open', f'{option_type}high', f'{option_type}low', f'{option_type}close'])
+            option_df2 = pd.read_csv(f"C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Options (Jan 2020 to 19 Dec 2022)\\{option_year}\\{underlying} Options\\{option_symbol}.csv", header=None, usecols=[0, 1, 2, 3, 4, 5], names=[f'{option_type}date', f'{option_type}time', f'{option_type}open', f'{option_type}high', f'{option_type}low', f'{option_type}close'])
+
+            # option_df2 = pd.read_csv(f"C:\\keshav\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Options (Jan 2020 to 19 Dec 2022)\\{option_year}\\{underlying} Options\\{option_symbol}.csv", header=None, usecols=[0, 1, 2, 3, 4, 5], names=[f'{option_type}date', f'{option_type}time', f'{option_type}open', f'{option_type}high', f'{option_type}low', f'{option_type}close'])
 
             option_df2[f'{option_type}date'] = pd.to_datetime(option_df2[f'{option_type}date'], format='%Y%m%d').dt.date.astype(str)
             option_df2['datetime'] = option_df2[f'{option_type}date'] + ' ' + option_df2[f'{option_type}time']
@@ -202,6 +206,8 @@ process_option_data_exit('Exit_symbolCE','CE')
 process_option_data_exit('Exit_symbolPE','PE')
 
 
-# print(df.columns)
-# print(df[['Entry_CEprice', 'Entry_PEprice', 'Exit_CEprice','Exit_PEprice']])
+
+
+print(df.columns)
+print(df[['Entry_CEprice', 'Entry_PEprice', 'Exit_CEprice','Exit_PEprice']])
 # df.to_csv("C:\\keshav\\Rahul\\BankniftyNifty\\ulitmatedf.csv")
