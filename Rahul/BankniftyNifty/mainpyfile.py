@@ -185,10 +185,6 @@ df.drop(columns=['Entry_date','Entry_time','Entry_expDateDt'],inplace=True)
 df['Entry_relventExpiryDt'] = df['Entry_relventExpiryDt'].fillna(method='ffill')
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 96974dae1430aa1a1eb2ccf28dbc6990b8ab665e
 ####################   Working with Exit Time   #################################################################################
 #Part6--> setting exitDt and relevent
 
@@ -279,14 +275,7 @@ for i, row in df.iterrows():
         # print(f"File not found for {pe_symbol} in {pe_year}")
         pass
 
-<<<<<<< HEAD
-
-print(df)
-
-# df.to_csv("final_df_sat.csv")
-=======
 df.drop(columns=['Exit_year','Entry_year'],axis=1)
 
 
 # df.to_csv("C:\\keshav\\Rahul\\BankniftyNifty\\FINAL_df2.csv")
->>>>>>> 96974dae1430aa1a1eb2ccf28dbc6990b8ab665e
