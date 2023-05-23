@@ -181,12 +181,6 @@ df['Entry_relventExpiryDt'] = df['Entry_relventExpiryDt'].fillna(method='ffill')
 
 
 
-
-
-
-
-
-
 ####################   Working with Exit Time   #################################################################################
 #Part6--> setting exitDt and relevent
 
@@ -270,4 +264,7 @@ for i, row in df.iterrows():
         # print(f"File not found for {pe_symbol} in {pe_year}")
         pass
 
-df.to_csv("final_df_sat.csv")
+
+print(df)
+
+# df.to_csv("final_df_sat.csv")
