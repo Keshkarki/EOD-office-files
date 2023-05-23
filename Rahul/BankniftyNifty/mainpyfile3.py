@@ -4,6 +4,7 @@ import datetime as dt
 from datetime import datetime, timedelta
 
 pd.set_option('display.max_colwidth', None)
+# pd.set_option('display.max_rows', None)
 
 #variables
 entryDaysFromExpiry = 0
@@ -88,13 +89,13 @@ df['symbolPE'] = underlying+yymmdd+strikepricePE+'PE'
 
 
 #adding year column for searching symbol
-df['year']=df['expDateDt'].dt.year.astype(str)
+# df['year']=df['expDateDt'].dt.year.astype(str)
+df.insert(0, 'year', df.index.year.astype(str))
+
 df['CEprice'] = np.NaN
 df['PEprice'] = np.NaN
-# print(df.iloc[:,6:])
 
 
-print(df)
 #Part5 - Reading realtive option file for each symbol
 # reading options
 
@@ -133,6 +134,7 @@ for i, row in df.iterrows():
 # ===========================================##For PE
 for i, row in df.iterrows():
     pe_symbol = row['symbolPE']
+    # pe_year = row['year']
     pe_year = row['year']
     dt = row.name
 
@@ -173,7 +175,6 @@ df.rename(columns = {
                     "PE_strike": "Entry_PE_strike" ,
                     "symbolCE": "Entry_symbolCE" ,
                     "symbolPE": "Entry_symbolPE" ,
-                    "year": "Entry_year" ,
                     "CEprice": "Entry_CEprice" ,
                     "PEprice": "Entry_PEprice" ,
                 },inplace=True
@@ -185,12 +186,9 @@ df.drop(columns=['Entry_date','Entry_time','Entry_expDateDt'],inplace=True)
 df['Entry_relventExpiryDt'] = df['Entry_relventExpiryDt'].fillna(method='ffill')
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 96974dae1430aa1a1eb2ccf28dbc6990b8ab665e
 ####################   Working with Exit Time   #################################################################################
 #Part6--> setting exitDt and relevent
+
 
 df['exitDt'] = df['Entry_relventExpiryDt']+pd.Timedelta(days=exitDaysFromExpiry)
 df['exitDt'] = df['exitDt'].dt.date
@@ -199,6 +197,9 @@ df['exitDt'] = df['exitDt']+' '+exitTime
 df['exitDt'] = pd.to_datetime(df['exitDt'])
 
 df['Exit_relventExpiryDt'] = df['Entry_relventExpiryDt']
+
+
+df.insert(10,'Exit_year',df['exitDt'].dt.year.astype(str))
 
 
 #part 7 --> calculating banknifty values from df
@@ -210,7 +211,6 @@ df['Exit_CE_strike'] = df['Entry_CE_strike']
 df['Exit_PE_strike'] = df['Entry_PE_strike']
 df['Exit_symbolCE'] = df['Entry_symbolCE']
 df['Exit_symbolPE'] = df['Entry_symbolPE']
-df['Exit_year'] = df['Entry_year']
 
 
 # #Part8 - Calculating Exit_CEprice and Exit_PEprice reading file for symbol and math with date and capture close price
@@ -279,14 +279,7 @@ for i, row in df.iterrows():
         # print(f"File not found for {pe_symbol} in {pe_year}")
         pass
 
-<<<<<<< HEAD
 
-print(df)
+# print(df.iloc[:,12:])
 
-# df.to_csv("final_df_sat.csv")
-=======
-df.drop(columns=['Exit_year','Entry_year'],axis=1)
-
-
-# df.to_csv("C:\\keshav\\Rahul\\BankniftyNifty\\FINAL_df2.csv")
->>>>>>> 96974dae1430aa1a1eb2ccf28dbc6990b8ab665e
+df.to_csv("C:\\keshav\\Rahul\\BankniftyNifty\\FINAL_df4.csv")
