@@ -18,16 +18,11 @@ class OptionDataProcessor:
         self.underlyingStrikeDiff = 50              
         self.underlying = 'BANKNIFTY'
 
-
         self.underlyingStrikeDiff = 100 if self.underlying == 'BANKNIFTY' else 50
-
         self.OTM_points = 100
-
         self.df = None
         self.df2 = None
         self.merged_df = None
-        self.renaming() 
-
 
 
     def load_weekly_expiry_dates(self, file_path):
@@ -104,7 +99,9 @@ class OptionDataProcessor:
             dt = row.name
 
             try:
-                option_df2 = pd.read_csv(f"C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Options (Jan 2020 to 19 Dec 2022)\\{option_year}\\{self.underlying} Options\\{option_symbol}.csv", header=None, usecols=[0, 1, 2, 3, 4, 5], names=[f'{option_type}date', f'{option_type}time', f'{option_type}open', f'{option_type}high', f'{option_type}low', f'{option_type}close'])
+                # option_df2 = pd.read_csv(f"C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Options (Jan 2020 to 19 Dec 2022)\\{option_year}\\{self.underlying} Options\\{option_symbol}.csv", header=None, usecols=[0, 1, 2, 3, 4, 5], names=[f'{option_type}date', f'{option_type}time', f'{option_type}open', f'{option_type}high', f'{option_type}low', f'{option_type}close'])
+
+                option_df2 = pd.read_csv(f"C:\\keshav\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Options (Jan 2020 to 19 Dec 2022)\\{option_year}\\{underlying} Options\\{option_symbol}.csv", header=None, usecols=[0, 1, 2, 3, 4, 5], names=[f'{option_type}date', f'{option_type}time', f'{option_type}open', f'{option_type}high', f'{option_type}low', f'{option_type}close'])                
 
                 option_df2[f'{option_type}date'] = pd.to_datetime(option_df2[f'{option_type}date'], format='%Y%m%d').dt.date.astype(str)
                 option_df2['datetime'] = option_df2[f'{option_type}date'] + ' ' + option_df2[f'{option_type}time']
@@ -120,8 +117,12 @@ class OptionDataProcessor:
             except FileNotFoundError:
                 pass
 
+            
+        print("dataframe",self.df)
+        print(self.df.columns)
 
-    def renaming(self):
+
+    def rename_fn(self):
         self.df.rename(columns={
         'relventExpiryDt': "Entry_relventExpiryDt",
         "expDateDt": "Entry_expDateDt",
@@ -140,7 +141,39 @@ class OptionDataProcessor:
 
         # Fill NaN values in 'Entry_relventExpiryDt' column using forward-fill (ffill) method
         self.df['Entry_relventExpiryDt'] = self.df['Entry_relventExpiryDt'].fillna(method='ffill')
-        print('hiiii')
+        print(self.df.iloc[:,6:])
+
+
+    def process_option_data_exit(symbol,option_type):
+        for i, row in self.df.iterrows():
+            option_symbol = row[symbol]
+            option_year = row['Exit_year']
+            dt = self.df['exitDt'][i]
+
+            try:
+                # option_df2 = pd.read_csv(f"C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Options (Jan 2020 to 19 Dec 2022)\\{option_year}\\{underlying} Options\\{option_symbol}.csv", header=None, usecols=[0, 1, 2, 3, 4, 5], names=[f'{option_type}date', f'{option_type}time', f'{option_type}open', f'{option_type}high', f'{option_type}low', f'{option_type}close'])
+
+                option_df2 = pd.read_csv(f"C:\\keshav\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Options (Jan 2020 to 19 Dec 2022)\\{option_year}\\{underlying} Options\\{option_symbol}.csv", header=None, usecols=[0, 1, 2, 3, 4, 5], names=[f'{option_type}date', f'{option_type}time', f'{option_type}open', f'{option_type}high', f'{option_type}low', f'{option_type}close'])
+
+                option_df2[f'{option_type}date'] = pd.to_datetime(option_df2[f'{option_type}date'], format='%Y%m%d').dt.date.astype(str)
+                option_df2['datetime'] = option_df2[f'{option_type}date'] + ' ' + option_df2[f'{option_type}time']
+                option_df2['datetime'] = pd.to_datetime(option_df2['datetime'])
+                option_df2.set_index('datetime', inplace=True)
+
+                if dt in option_df2.index:
+                    price_value = option_df2.loc[dt, f'{option_type}close']
+                    self.df.loc[self.df['exitDt']==dt, f'Exit_{option_type}price'] = price_value
+                else:
+                    self.df.loc[self.df['exitDt']==dt, f'Exit_{option_type}price'] = np.NaN
+            except FileNotFoundError:
+                pass
+
+
+
+
+
+
+
 
 
 
@@ -148,9 +181,9 @@ class OptionDataProcessor:
 # Usage example
 processor = OptionDataProcessor()
 
-processor.load_weekly_expiry_dates("C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\Rahul\\BankniftyNifty\\Weekly_exp_dates.csv")
+processor.load_weekly_expiry_dates("C:\\keshav\\Rahul\\BankniftyNifty\\Weekly_exp_dates.csv")
 
-processor.load_banknifty_data(f"C:\\Users\\kkark\\oneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Spot Indices (Jan 2020 to 19 Dec 2022)\\{underlying}.csv")
+processor.load_banknifty_data(f"C:\\keshav\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Spot Indices (Jan 2020 to 19 Dec 2022)\\{underlying}.csv")
 
 processor.merge_dataframes()
 processor.modify_df()
@@ -161,8 +194,15 @@ processor.process_option_data_entry('symbolCE', 'CE')
 
 # Call the method for PE symbols
 processor.process_option_data_entry('symbolPE', 'PE')
-processor.renaming()
 
+processor.rename_fn()
+
+
+# Call the function for CE symbols
+process_option_data_exit('Exit_symbolCE','CE')
+
+# Call the function for PE symbols
+process_option_data_exit('Exit_symbolPE','PE')
 
 #office file path
 # df = pd.read_csv("C:\\keshav\\Rahul\\BankniftyNifty\\Weekly_exp_dates.csv",usecols=['Exp_date'])
