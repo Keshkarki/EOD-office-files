@@ -9,7 +9,7 @@ pd.set_option('display.max_columns',None)
 # Set the display width option
 pd.set_option('display.width', 1000)
 
-date = '2022-09-02'      
+date = '2021-03-18'      
 datestr = date.split('-')[0]
 start_time = '09:15'
 entry_time = '09:20'
@@ -179,7 +179,6 @@ rel_CE_df.set_index(CEdatetime,inplace=True)
 
 rel_CE_df=rel_CE_df.loc[date]
 
-# print(rel_CE_df)
 
 
 
@@ -363,13 +362,13 @@ combo_df[columns_needs_ffill] = combo_df[columns_needs_ffill].fillna(method='ffi
 # print(combo_df[['CE_PnL','PE_PnL']])
 # combo_df.to_csv('kebro.csv', index=False)
 
-df = combo_df
+combo_df
 
-df.to_csv('testffileSept.csv',index=False)  #kebro
+combo_df.to_csv('combodf_18_03_2021')  
 
 
-#------------------------------PART 3------------------------------------------------------------------------
-#getting last row close values 
+# #------------------------------PART 3------------------------------------------------------------------------
+# # getting last row close values 
 # final_close = df['close'][df['close'].last_valid_index()]
 
 
