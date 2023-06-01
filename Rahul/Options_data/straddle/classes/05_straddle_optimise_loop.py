@@ -250,36 +250,36 @@ class Straddle:
         result_df.loc[0,"straddle_minMTM"] = straddle_minMTM
         result_df.loc[0,"straddle_PnL"] = straddle_PnL
         self.result_df = result_df
-        print(self.result_df)
+        # print(self.result_df)
     
 
     
-# Create an instance of the Straddle class with custom values
-obj = Straddle(merged_df = merged_df,date='2020-05-07',
-                             exp_period='currWeek_exp_dt', underlying='BANKNIFTY',
-                             start_time='09:15', entry_time='09:20', exit_time='15:15', end_time='15:20',
-                             entry_side='sell', OTM_points=100,
-                             straddle_SL_pct=0.2, straddle_tgt_pct=0.8)
+# # Create an instance of the Straddle class with custom values
+# obj = Straddle(merged_df = merged_df,date='2020-05-07',
+#                              exp_period='currWeek_exp_dt', underlying='BANKNIFTY',
+#                              start_time='09:15', entry_time='09:20', exit_time='15:15', end_time='15:20',
+#                              entry_side='sell', OTM_points=100,
+#                              straddle_SL_pct=0.2, straddle_tgt_pct=0.8)
 
 
-# """Runnign loop for all dates"""
-# result_df_all = pd.DataFrame(columns=['date', 'straddle_close', 'straddle_entryPrice', 'straddle_hit_status', 'straddle_minMTM', 'straddle_maxMTM', 'straddle_PnL'])
+"""Runnign loop for all dates"""
+result_df_all = pd.DataFrame(columns=['date', 'straddle_close', 'straddle_entryPrice', 'straddle_hit_status', 'straddle_minMTM', 'straddle_maxMTM', 'straddle_PnL'])
 
-# for date_dt in unique_dates:
-#     try:
-#         obj = Straddle(merged_df = merged_df ,date=date_dt,
-#                                     exp_period='currWeek_exp_dt', underlying='BANKNIFTY',
-#                                     start_time='09:15', entry_time='09:20', exit_time='15:15', end_time='15:20',
-#                                     entry_side='sell', OTM_points=100,
-#                                     straddle_SL_pct=0.2, straddle_tgt_pct=0.8)
+for date_dt in unique_dates:
+    try:
+        obj = Straddle(merged_df = merged_df ,date=date_dt,
+                                    exp_period='currWeek_exp_dt', underlying='BANKNIFTY',
+                                    start_time='09:15', entry_time='09:20', exit_time='15:15', end_time='15:20',
+                                    entry_side='sell', OTM_points=100,
+                                    straddle_SL_pct=0.2, straddle_tgt_pct=0.8)
         
-#         result_row_df = obj.result_df
-#         result_df_all = pd.concat([result_df_all, result_row_df], ignore_index=True)
+        result_row_df = obj.result_df
+        result_df_all = pd.concat([result_df_all, result_row_df], ignore_index=True)
 
-#     except Exception as e:
-#         print(f"Some Error Occured for the {date_dt}, {e}")
+    except Exception as e:
+        print(f"Some Error Occured for the {date_dt}, {e}")
 
-# print(result_df_all)
+print(result_df_all)
 
  # %%
 

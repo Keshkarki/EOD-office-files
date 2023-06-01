@@ -37,6 +37,9 @@ end_time_dt = pd.to_datetime(end_time).time()
 
 # %%
 
+import time
+start_time = time.time()
+
 
 df = pd.read_csv('C:\\keshav\\Rahul\\Options_data\\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\\NIFTY & BANKNIFTY Spot Indices (Jan 2020 to 19 Dec 2022)\\BANKNIFTY.csv',header=None)
 df.rename(columns={
@@ -135,14 +138,12 @@ unique_lst =df.dt.date
 unique_lst = unique_lst.unique()
 
 # %%
-
-
-# master_df = pd.DataFrame(columns=['final_close','final_CEentryPrice', 'final_CEhitstatus', 'final_CE_maxMTM','final_CE_minMTM','final_CE_PnL', 'final_PEentryPrice' ,'final_PEhitstatus','final_PE_maxMTM', 'final_PE_minMTM', 'final_PE_PnL', 'finalTotal_PnL'])
-
+import time
+start_time = time.time()
 master_df = pd.DataFrame()
 
 
-for date_dt in unique_lst[0:1]:              #this date is in datetime.dateformat
+for date_dt in unique_lst:              #this date is in datetime.dateformat
     try:
 
         date = date_dt.strftime('%Y-%m-%d')   #string --> 2020-01-01
@@ -165,8 +166,8 @@ for date_dt in unique_lst[0:1]:              #this date is in datetime.dateforma
         CE_stp = CE_strike_prices(entry_time_dt,date_dt)
         PE_stp = PE_strike_prices(entry_time_dt,date_dt)
 
-        print(CE_stp)
-        print(PE_stp)
+        # print(CE_stp)
+        # print(PE_stp)
 
 
         # PART-B --> calculating expiry date
@@ -187,8 +188,8 @@ for date_dt in unique_lst[0:1]:              #this date is in datetime.dateforma
         pe_symbol = underlying+exp_date+PE_stp+'PE'
         pe_symbol = f"{pe_symbol}"
 
-        print(ce_symbol)
-        print(pe_symbol)
+        # print(ce_symbol)
+        # print(pe_symbol)
 
 
 
@@ -455,8 +456,11 @@ for date_dt in unique_lst[0:1]:              #this date is in datetime.dateforma
         pass
         print(f"Some Error occured for the {date_dt}")
 
+print(master_df)
+
+end_time = time.time()
+print(f"Total time = {end_time -start_time}")
 
     # %%
-print(master_df)
 
 

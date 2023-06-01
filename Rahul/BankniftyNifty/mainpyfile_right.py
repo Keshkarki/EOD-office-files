@@ -1,3 +1,5 @@
+
+# %%
 import numpy as np
 import pandas as pd
 import datetime as dt
@@ -6,6 +8,7 @@ from datetime import datetime, timedelta
 pd.set_option('display.max_colwidth', None)
 # pd.set_option('display.max_rows', None)
 
+# %%
 #variables
 entryDaysFromExpiry = 0
 exitDaysFromExpiry = 0
@@ -18,6 +21,7 @@ underlying = 'BANKNIFTY'
 underlyingStrikeDiff = 100 if underlying == 'BANKNIFTY' else 50
 OTM_points = 100
 
+# %%
 #Part1 -Creating main dataframe ##########################################################
 df = pd.read_csv("C:\\keshav\\Rahul\\BankniftyNifty\\Weekly_exp_dates.csv",usecols=['Exp_date'])
 
@@ -34,7 +38,7 @@ df['time'] = df['entryDt'].dt.date
 df.set_index('entryDt',inplace=True)
 df = df[['expDateDt', 'date','time']]
 
-
+#   %%
 
 
 #Part2- Banknifty DAtaframe ###################################################################
@@ -55,7 +59,10 @@ df2['date'] = pd.to_datetime(df2['date'],format='%Y%m%d').dt.date.astype(str)
 df2['datetime'] = df2['date'] + ' ' + df2['time']
 df2['datetime'] = pd.to_datetime(df2['datetime'])
 df2.set_index('datetime',inplace=True)
-# print("BankNifty_dataframe",df2)
+print("BankNifty_dataframe",df2)
+
+
+# %%
 
 #Part3 taking vaues from banknifty using merge #########################################################
 merged_df = pd.merge(df,df2['close'], left_index=True,right_index=True, how='left')
@@ -68,12 +75,17 @@ df['BANKNIFTY_price'] = merged_df['close']
 df['CE_strike'] = (round(df['BANKNIFTY_price']/underlyingStrikeDiff)*underlyingStrikeDiff + strikeDiff).astype(int)
 df['PE_strike'] = (round(df['BANKNIFTY_price']/underlyingStrikeDiff)*underlyingStrikeDiff - strikeDiff).astype(int)
 
+# df 
 
 #adding relevent entryDate by shifting above one
+
 df.reset_index(inplace=True)
 df.insert(0,'relventExpiryDt',df['entryDt'].shift(-1))
 df.set_index('entryDt',inplace=True)
 
+df
+
+# %%
 
 
 #Part4 -Creating Symbol for reading Option file ###############################################################
@@ -97,8 +109,6 @@ df['PEprice'] = np.NaN
 
 #Part5 - Reading realtive option file for each symbol
 # reading options
-
-
 
 # Iterate over each row of the DataFrame and update CEprice
 

@@ -2,6 +2,7 @@
 # %%
 import numpy as np
 import pandas as pd
+import time
 
 from _01_merged_df import MergedDataFrame
 obj = MergedDataFrame(underlying='BANKNIFTY')
@@ -10,6 +11,7 @@ unique_dates = obj.get_unique_dates()
 
 # %%
 
+start_time = time.time()
 class Individual:
     def __init__(self,merged_df, date, exp_period, underlying,
                  start_time, entry_time, exit_time, end_time,
@@ -392,7 +394,7 @@ class Individual:
 """Runnign loop for all dates"""
 result_df_all = pd.DataFrame(columns=['date','CEclose','CE_entryPrice', 'CE_hit_status', 'CE_minMTM','CE_maxMTM','CE_PnL','PEclose','PE_entryPrice', 'PE_hit_status', 'PE_minMTM','PE_maxMTM','PE_PnL','Total_PnL'])
 
-for date_dt in unique_dates[0:5]:
+for date_dt in unique_dates:
     try:
         obj = Individual(merged_df = merged_df ,date=date_dt,
                                     exp_period='currWeek_exp_dt', underlying='BANKNIFTY',
@@ -407,6 +409,10 @@ for date_dt in unique_dates[0:5]:
         print(f"Some Error Occured for the {date_dt}, {e}")
 
 print(result_df_all)
+
+end_time = time.time()
+total_time = end_time - start_time
+print(f" Total Time take : {total_time}")
 
  # %%
 
