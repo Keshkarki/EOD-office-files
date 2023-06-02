@@ -105,6 +105,9 @@ df.insert(0, 'year', df.index.year.astype(str))
 
 df['CEprice'] = np.NaN
 df['PEprice'] = np.NaN
+df
+
+# %%
 
 
 #Part5 - Reading realtive option file for each symbol
@@ -266,7 +269,6 @@ for i, row in df.iterrows():
             df.loc[df['exitDt']==dt, 'Exit_CEprice'] = CEpriceValue
         else:
             # df.loc[df['exitDt']==dt, 'Exit_CEprice'] = CEpriceValue= np.NaN
-
             nearest_loc_index = rel_CE_df.index.searchsorted(dt).item()
             nearest_loc_index = nearest_loc_index -1  #since indexing starts from 1
 

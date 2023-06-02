@@ -140,6 +140,9 @@ def CE_strike_prices(entry_time_dt,date_dt):
 def PE_strike_prices(entry_time_dt,date_dt):
     return str(round(merged_df.loc[(merged_df.index.time == entry_time_dt) & (merged_df.index.date == date_dt), 'ATMStrPr'].values[0] - OTM_points))
 
+
+
+
 CE_stp = CE_strike_prices(entry_time_dt,date_dt)
 PE_stp = PE_strike_prices(entry_time_dt,date_dt)
 
