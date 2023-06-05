@@ -1,0 +1,7 @@
+1. Simple linear regression or multiple Linear regression
+2. https://www.youtube.com/watch?v=uEGZ68NH-sM (video link)
+3. use regression metrices for checking accuracy
+4. plot scatter plots first it they are related then do linear regresssion only
+5. all five matrices nikalne hai for that refer https://learnwith.campusx.in/s/courses/637339afe4b0615a1bbed390/take  link last 30 min 
+6.  linear regression is best for inference not for prediction alwyas like other
+7. Chatgpt
