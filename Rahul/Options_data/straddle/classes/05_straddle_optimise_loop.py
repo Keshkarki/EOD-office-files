@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from _01_merged_df import MergedDataFrame
 
-obj = MergedDataFrame(underlying='BANKNIFTY')
+obj = MergedDataFrame(underlying='NIFTY')
 merged_df = obj.get_merged_df() 
 unique_dates = obj.get_unique_dates()
 
@@ -268,7 +268,7 @@ result_df_all = pd.DataFrame(columns=['date', 'straddle_close', 'straddle_entryP
 for date_dt in unique_dates:
     try:
         obj = Straddle(merged_df = merged_df ,date=date_dt,
-                                    exp_period='currWeek_exp_dt', underlying='BANKNIFTY',
+                                    exp_period='currWeek_exp_dt', underlying='NIFTY',
                                     start_time='09:15', entry_time='09:20', exit_time='15:15', end_time='15:20',
                                     entry_side='sell', OTM_points=100,
                                     straddle_SL_pct=0.2, straddle_tgt_pct=0.8)
@@ -280,6 +280,8 @@ for date_dt in unique_dates:
         print(f"Some Error Occured for the {date_dt}, {e}")
 
 print(result_df_all)
+result_df_all.to_csv('result_df_all_NIFTY_100.csv')
+print(result_df_all['straddle_hit_status'].value_counts())
 
  # %%
 

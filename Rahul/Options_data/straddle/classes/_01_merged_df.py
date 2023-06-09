@@ -30,6 +30,7 @@ class MergedDataFrame:
             4: 'low',
             5: 'close'
         }, inplace=True)
+
         bank_nifty_df['date'] = bank_nifty_df['date'].astype('str')
         datetime = pd.to_datetime(bank_nifty_df['date'] + ' ' + bank_nifty_df['time'], format='%Y%m%d %H:%M')
         bank_nifty_df.insert(1, 'datetime', datetime)
@@ -37,6 +38,8 @@ class MergedDataFrame:
         bank_nifty_df.set_index('datetime', inplace=True)
         bank_nifty_df = bank_nifty_df.between_time('09:15:00', '15:29:00')
         return bank_nifty_df
+    
+    
 
     def _calculate_exp_dates(self, bank_nifty_df):
         x = sorted(list(set(bank_nifty_df.index.date)))
