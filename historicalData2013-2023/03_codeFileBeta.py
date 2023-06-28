@@ -22,6 +22,7 @@ beta_file = beta_file.round(1)
 #%% INPUT DATES
 start_date_input = pd.to_datetime("2012-03-31")
 end_date_input = pd.to_datetime("2023-03-31")
+filter_mode = "market_cap"  #"market_cap"
 beta_value = 0.7
 
 
@@ -129,10 +130,18 @@ for i in range(len(filtered_dates)):
 
         # print(df)
 
-        mask = beta_file_filtered.loc[filtered_dates[i]] < 0.7
-        filtered_row = beta_file_filtered.loc[filtered_dates[i]][mask]
-        # print(filtered_row)
-        df = df[df.index.isin(filtered_row.index)]
+        if filter_mode == "beta":
+            mask = beta_file_filtered.loc[filtered_dates[i]] < 0.7
+            filtered_row = beta_file_filtered.loc[filtered_dates[i]][mask]
+            # print(filtered_row)
+            df = df[df.index.isin(filtered_row.index)]
+
+        
+        if filter_mode == 'market_cap':
+                df['market_cap'] = df['Outstanding shares']*df['price']
+                df = df.sort_values(by='market_cap', ascending=False).head(10)  #top 10
+        
+
 
         df['return'] = df['next_year_price']/df['price']*100 -100
         df = df['return'].mean()
