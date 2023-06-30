@@ -112,11 +112,22 @@ elif period == 'custom':
 beta_file_filtered = beta_file.loc[filtered_dates]
 
 
+
+
+#%%
+# Filter only the first date of every year fix top 10 of first month
+filtered_dates2 = [date for i, date in enumerate(filtered_dates) if i == 0 or date.year != filtered_dates[i-1].year]
+print(filtered_dates2)
+
+
+
+
 #%% LOOP PART CAPTURING DETAILS AND INSERTING IN DICTIONARIES
 main_dict = {}
 nifty_dict = {}
 
 for i in range(len(filtered_dates)):
+    print(i)
     # print(filtered_dates[i])
     try:
             
@@ -131,22 +142,26 @@ for i in range(len(filtered_dates)):
 
         # print(df)
 
-        if filter_mode == "beta":
-            mask = beta_file_filtered.loc[filtered_dates[i]] < 0.7
-            filtered_row = beta_file_filtered.loc[filtered_dates[i]][mask]
-            # print(filtered_row)
-            df = df[df.index.isin(filtered_row.index)]
+        if filtered_dates[i] in filtered_dates2:
 
-        
-        if filter_mode == 'market_cap':
-                df['market_cap'] = df['Outstanding shares']*df['price']
-                df = df.sort_values(by='market_cap', ascending=False).head(10)  #top 10
-        
+            # if filter_mode == "beta":
+            #     mask = beta_file_filtered.loc[filtered_dates[i]] < 0.7
+            #     filtered_row = beta_file_filtered.loc[filtered_dates[i]][mask]
+            #     # print(filtered_row)
+            #     df = df[df.index.isin(filtered_row.index)]
 
+            
+            if filter_mode == 'market_cap':
+                    df['market_cap'] = df['Outstanding shares']*df['price']
+                    df = df.sort_values(by='market_cap', ascending=False).head(10)  #top 10
+                    companies = df.index
 
-        df['return'] = df['next_year_price']/df['price']*100 -100
-        df = df['return'].mean()
-        main_dict[filtered_dates[i]] = df
+        else:
+            df = df[df.index.isin(companies)]
+            # print(df)
+            df['return'] = df['next_year_price']/df['price']*100 -100
+            df = df['return'].mean()
+            main_dict[filtered_dates[i]] = df
 
 
         #also for nifty
