@@ -1,6 +1,6 @@
 
 # %% Notes -->
-# 1. creating bins first and then runnig loop second method
+# 1.static yearly bottom 10 fixed as per first 10
 
 #%% importing libraries
 import numpy as np
@@ -22,7 +22,8 @@ beta_file = beta_file.round(1)
 #%% INPUT DATES
 start_date_input = pd.to_datetime("2012-03-31")
 end_date_input = pd.to_datetime("2023-03-31")
-filter_mode = "market_cap"  #"market_cap"
+filter_mode = input("choose filter  mode ['market_cap, 'beta'] : ")
+# filter_mode = "market_cap"  #"market_cap"  #beta
 beta_value = 0.7
 
 
@@ -54,8 +55,6 @@ for year in range(start_date.year, end_date.year + 1):
     # Create a timestamp for March 31 of the current year
     target_date = pd.Timestamp(year=year, month=3, day=31)
 
-    # Find the closest date before March 31 in the master dataframe index
-    # closest_date = max(filter(lambda x: x <= target_date, master_df.index))
     closest_date = master_df.index[master_df.index <= target_date].max()
 
     filtered_yearly.append(closest_date)
@@ -105,8 +104,6 @@ elif period == 'quarterly':
 elif period == 'custom':
     filtered_dates = filtered_custom
 
-
-
 # betadates fitered
 beta_file_filtered = beta_file.loc[filtered_dates]
 
@@ -114,8 +111,19 @@ beta_file_filtered = beta_file.loc[filtered_dates]
 #%% LOOP PART CAPTURING DETAILS AND INSERTING IN DICTIONARIES
 main_dict = {}
 nifty_dict = {}
+first_bouquet  = [] 
 
-for i in range(len(filtered_dates)):
+filtered_dates_first = []
+
+seen_years = set()
+for timestamp in filtered_dates:
+    year = timestamp.year
+    if year not in seen_years:
+        filtered_dates_first.append(timestamp)
+        seen_years.add(year)
+
+
+for i in range(0,len(filtered_dates)):
     # print(filtered_dates[i])
     try:
             
@@ -128,19 +136,38 @@ for i in range(len(filtered_dates)):
             value2 = master_df.loc[filtered_dates[i+1], company]
             df.loc[company,'next_year_price'] = value2
 
-        # print(df)
 
         if filter_mode == "beta":
-            mask = beta_file_filtered.loc[filtered_dates[i]] < 0.7
-            filtered_row = beta_file_filtered.loc[filtered_dates[i]][mask]
-            # print(filtered_row)
-            df = df[df.index.isin(filtered_row.index)]
+            if filtered_dates[i] in filtered_dates_first:
+                mask = beta_file_filtered.loc[filtered_dates[i]] < 0.7
+                filtered_row = beta_file_filtered.loc[filtered_dates[i]][mask]
+                # print(filtered_row)
+                df = df[df.index.isin(filtered_row.index)]
+                first_bouquet = df.index.to_list()
+
+            
+            else:
+                    # print(filtered_dates[i])
+                    df = df[df.index.isin(first_bouquet)]
+                    # print(filtered_dates[i])
+                    # print(df)
+
+
 
         
         if filter_mode == 'market_cap':
                 df['market_cap'] = df['Outstanding shares']*df['price']
-                df = df.sort_values(by='market_cap', ascending=False).head(10)  #top 10
-        
+                if filtered_dates[i] in filtered_dates_first:
+                    # print(filtered_dates[i])
+                    df = df.sort_values(by='market_cap', ascending=False).tail(10)  #top 10
+                    first_bouquet = df.index.to_list()
+
+                else:
+                    # print(filtered_dates[i])
+                    df = df[df.index.isin(first_bouquet)]
+                    # print(filtered_dates[i])
+                    # print(df)
+
 
 
         df['return'] = df['next_year_price']/df['price']*100 -100
@@ -149,7 +176,8 @@ for i in range(len(filtered_dates)):
 
 
         #also for nifty
-        #creating every time within loop
+        # creating every time within loop
+
         nifty_temp_df = pd.DataFrame(index=['Nifty'], columns=['price', 'next_year_price'])
         value_nifty = master_df.loc[filtered_dates[i],'Nifty']
         nifty_temp_df.loc['Nifty','price'] = value_nifty    
@@ -164,6 +192,10 @@ for i in range(len(filtered_dates)):
 
     except:
         pass
+
+    # if i==2:
+    #     break
+
 
     
 

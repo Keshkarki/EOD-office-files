@@ -1,29 +1,29 @@
 
 # %% Notes -->
-# 1. creating bins first and then runnig loop second method
-
+# 1.static  yearly middle30 stocks fixed as per first date
 
 #%% importing libraries
 import numpy as np
 import pandas as pd
 import datetime as dt
-pd.set_option('display.max_rows',None)
+# pd.set_option('display.max_rows',None)
 
 
 #%% reading file
-master_df = pd.read_csv("C:\\keshav\\50stocks_performance\\masterFile.csv", parse_dates=['Date'],index_col='Date')
-nifty_df = pd.read_csv("C:\\keshav\\historicalData2013-2023\\Nifty50.csv",usecols=['symbol','Outstanding shares'])
+master_df = pd.read_csv("C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\historicalData2013-2023\\masterFile.csv", parse_dates=['Date'],index_col='Date')
+nifty_df = pd.read_csv("C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\historicalData2013-2023\\Nifty50.csv",usecols=['symbol','Outstanding shares'])
 nifty_df.set_index('symbol',inplace=True)
 
 
 #reading Beta1 sheet of excel file
-beta_file = pd.read_excel("C:\\keshav\\historicalData2013-2023\\Beta_nifty.xlsx",sheet_name='Beta1', header=1, parse_dates=['Date'], index_col='Date')
+beta_file = pd.read_excel("C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\historicalData2013-2023\\Beta_nifty.xlsx",sheet_name='Beta1', header=1, parse_dates=['Date'], index_col='Date')
 beta_file = beta_file.round(1)
 
 #%% INPUT DATES
 start_date_input = pd.to_datetime("2012-03-31")
 end_date_input = pd.to_datetime("2023-03-31")
-filter_mode = "market_cap"  #"market_cap"
+filter_mode = input("choose filter  mode ['market_cap, 'beta'] : ")
+# filter_mode = "market_cap"  #"market_cap"  #beta
 beta_value = 0.7
 
 
@@ -55,8 +55,6 @@ for year in range(start_date.year, end_date.year + 1):
     # Create a timestamp for March 31 of the current year
     target_date = pd.Timestamp(year=year, month=3, day=31)
 
-    # Find the closest date before March 31 in the master dataframe index
-    # closest_date = max(filter(lambda x: x <= target_date, master_df.index))
     closest_date = master_df.index[master_df.index <= target_date].max()
 
     filtered_yearly.append(closest_date)
@@ -106,28 +104,26 @@ elif period == 'quarterly':
 elif period == 'custom':
     filtered_dates = filtered_custom
 
-
-
 # betadates fitered
 beta_file_filtered = beta_file.loc[filtered_dates]
-
-
-
-
-#%%
-# Filter only the first date of every year fix top 10 of first month
-filtered_dates2 = [date for i, date in enumerate(filtered_dates) if i == 0 or date.year != filtered_dates[i-1].year]
-print(filtered_dates2)
-
-
 
 
 #%% LOOP PART CAPTURING DETAILS AND INSERTING IN DICTIONARIES
 main_dict = {}
 nifty_dict = {}
+first_bouquet  = [] 
 
-for i in range(len(filtered_dates)):
-    print(i)
+filtered_dates_first = []
+
+seen_years = set()
+for timestamp in filtered_dates:
+    year = timestamp.year
+    if year not in seen_years:
+        filtered_dates_first.append(timestamp)
+        seen_years.add(year)
+
+
+for i in range(0,len(filtered_dates)):
     # print(filtered_dates[i])
     try:
             
@@ -140,32 +136,50 @@ for i in range(len(filtered_dates)):
             value2 = master_df.loc[filtered_dates[i+1], company]
             df.loc[company,'next_year_price'] = value2
 
-        # print(df)
 
-        if filtered_dates[i] in filtered_dates2:
-
-            # if filter_mode == "beta":
-            #     mask = beta_file_filtered.loc[filtered_dates[i]] < 0.7
-            #     filtered_row = beta_file_filtered.loc[filtered_dates[i]][mask]
-            #     # print(filtered_row)
-            #     df = df[df.index.isin(filtered_row.index)]
+        if filter_mode == "beta":
+            if filtered_dates[i] in filtered_dates_first:
+                mask = beta_file_filtered.loc[filtered_dates[i]] < 0.7
+                filtered_row = beta_file_filtered.loc[filtered_dates[i]][mask]
+                # print(filtered_row)
+                df = df[df.index.isin(filtered_row.index)]
+                first_bouquet = df.index.to_list()
 
             
-            if filter_mode == 'market_cap':
-                    df['market_cap'] = df['Outstanding shares']*df['price']
-                    df = df.sort_values(by='market_cap', ascending=False).head(10)  #top 10
-                    companies = df.index
+            else:
+                    # print(filtered_dates[i])
+                    df = df[df.index.isin(first_bouquet)]
+                    # print(filtered_dates[i])
+                    # print(df)
 
-        else:
-            df = df[df.index.isin(companies)]
-            # print(df)
-            df['return'] = df['next_year_price']/df['price']*100 -100
-            df = df['return'].mean()
-            main_dict[filtered_dates[i]] = df
+
+
+        
+        if filter_mode == 'market_cap':
+                df['market_cap'] = df['Outstanding shares']*df['price']
+                if filtered_dates[i] in filtered_dates_first:
+                    # print(filtered_dates[i])
+                    df = df.sort_values(by='market_cap', ascending=False)#top 10
+                    df = df.iloc[11:41]
+                    # print(df)
+                    first_bouquet = df.index.to_list()
+
+                else:
+                    # print(filtered_dates[i])
+                    df = df[df.index.isin(first_bouquet)]
+                    # print(filtered_dates[i])
+                    # print(df)
+
+
+
+        df['return'] = df['next_year_price']/df['price']*100 -100
+        df = df['return'].mean()
+        main_dict[filtered_dates[i]] = df
 
 
         #also for nifty
-        #creating every time within loop
+        # creating every time within loop
+
         nifty_temp_df = pd.DataFrame(index=['Nifty'], columns=['price', 'next_year_price'])
         value_nifty = master_df.loc[filtered_dates[i],'Nifty']
         nifty_temp_df.loc['Nifty','price'] = value_nifty    
@@ -180,8 +194,6 @@ for i in range(len(filtered_dates)):
 
     except:
         pass
-
-    
 
 #%% # Assuming the dictionary with returns is stored in the variable 'returns_dict'
 returns_df1 = pd.DataFrame.from_dict(main_dict, orient='index', columns=['top10_stocks_avg_returns'])
