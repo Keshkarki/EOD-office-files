@@ -9,6 +9,7 @@ import pandas as pd
 import datetime as dt
 
 
+
 #%% reading file
 master_df = pd.read_csv("C:\\keshav\\50stocks_performance\\masterFile.csv", parse_dates=['Date'],index_col='Date')
 nifty_df = pd.read_csv("C:\\keshav\\historicalData2013-2023\\Nifty50.csv",usecols=['symbol','Outstanding shares'])
@@ -153,3 +154,6 @@ final_df['diff'] = final_df['top10_stocks_avg_returns'] - final_df['nifty_return
 final_df = final_df.round(1)
 print(final_df)
 
+#%%
+final_df.to_excel('quarterly.xlsx')
+# %%

@@ -10,13 +10,13 @@ import datetime as dt
 
 
 #%% reading file
-master_df = pd.read_csv("C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\historicalData2013-2023\\masterFile.csv", parse_dates=['Date'],index_col='Date')
-nifty_df = pd.read_csv("C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\historicalData2013-2023\\Nifty50.csv",usecols=['symbol','Outstanding shares'])
+master_df = pd.read_csv("C:\\keshav\\historicalData2013-2023\\masterFile.csv", parse_dates=['Date'],index_col='Date')
+nifty_df = pd.read_csv("C:\\keshav\\historicalData2013-2023\\Nifty50.csv",usecols=['symbol','Outstanding shares'])
 nifty_df.set_index('symbol',inplace=True)
 
 
 #reading Beta1 sheet of excel file
-beta_file = pd.read_excel("C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\historicalData2013-2023\\Beta_nifty.xlsx",sheet_name='Beta1', header=1, parse_dates=['Date'], index_col='Date')
+beta_file = pd.read_excel("C:\\keshav\\historicalData2013-2023\\Beta_nifty.xlsx",sheet_name='Beta1', header=1, parse_dates=['Date'], index_col='Date')
 beta_file = beta_file.round(1)
 
 #%% INPUT DATES

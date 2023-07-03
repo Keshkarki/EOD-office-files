@@ -9,15 +9,22 @@ import datetime as dt
 # pd.set_option('display.max_rows',None)
 
 
+
+
 #%% reading file
-master_df = pd.read_csv("C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\historicalData2013-2023\\masterFile.csv", parse_dates=['Date'],index_col='Date')
-nifty_df = pd.read_csv("C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\historicalData2013-2023\\Nifty50.csv",usecols=['symbol','Outstanding shares'])
+master_df = pd.read_csv("C:\\keshav\\historicalData2013-2023\\masterFile.csv", parse_dates=['Date'],index_col='Date')
+nifty_df = pd.read_csv("C:\\keshav\\historicalData2013-2023\\Nifty50.csv",usecols=['symbol','Outstanding shares'])
 nifty_df.set_index('symbol',inplace=True)
 
 
 #reading Beta1 sheet of excel file
-beta_file = pd.read_excel("C:\\Users\\kkark\\OneDrive\\Desktop\\OFFICE_FILES\\EOD-office-files\\historicalData2013-2023\\Beta_nifty.xlsx",sheet_name='Beta1', header=1, parse_dates=['Date'], index_col='Date')
+beta_file = pd.read_excel("C:\\keshav\\historicalData2013-2023\\Beta_nifty.xlsx",sheet_name='Beta1', header=1, parse_dates=['Date'], index_col='Date')
 beta_file = beta_file.round(1)
+
+
+
+
+
 
 #%% INPUT DATES
 start_date_input = pd.to_datetime("2012-03-31")
@@ -26,13 +33,7 @@ filter_mode = input("choose filter  mode ['market_cap, 'beta'] : ")
 # filter_mode = "market_cap"  #"market_cap"  #beta
 beta_value = 0.7
 
-
-#temporary
-# period = 'yearly'
-# input_custom_days = 30
-
 period = input(f"Please choose from [yearly,quarterly, monthly, custom]  : ")
-
 
 if period == "custom":
     input_custom_days = int(input('Please choose custom days : '))
@@ -45,6 +46,10 @@ else:
 start_date = master_df[master_df.index <= start_date_input].index.max()
 end_date = master_df[master_df.index <= end_date_input].index.max()
  
+
+
+
+
 
 #%% MAKING BINS --> annual, quarterly, monthly, custom
 
@@ -60,6 +65,10 @@ for year in range(start_date.year, end_date.year + 1):
     filtered_yearly.append(closest_date)
 
 
+
+
+
+
 # %% Monthly filtered df
 monthly_dates = pd.date_range(start=start_date, end=end_date, freq='M')
 filtered_monthly = []
@@ -68,6 +77,10 @@ filtered_monthly = []
 for date in monthly_dates:
     closest_date = master_df.index[master_df.index <= date].max()
     filtered_monthly.append(closest_date)
+
+
+
+
 
 
 #%% Qurterly 
@@ -80,6 +93,9 @@ for date in quarterly_dates:
     filtered_quarterly.append(closest_date)
 
 
+
+
+
 #%% custom dates 
 custom_dates = pd.date_range(start=start_date, end=end_date, freq=f"{input_custom_days}D")
 filtered_custom = []
@@ -88,6 +104,8 @@ filtered_custom = []
 for date in custom_dates:
     closest_date = master_df.index[master_df.index <= date].max()
     filtered_custom.append(closest_date)
+
+
 
 
 
@@ -106,6 +124,9 @@ elif period == 'custom':
 
 # betadates fitered
 beta_file_filtered = beta_file.loc[filtered_dates]
+
+
+
 
 
 #%% LOOP PART CAPTURING DETAILS AND INSERTING IN DICTIONARIES
@@ -139,11 +160,18 @@ for i in range(0,len(filtered_dates)):
 
         if filter_mode == "beta":
             if filtered_dates[i] in filtered_dates_first:
-                mask = beta_file_filtered.loc[filtered_dates[i]] < 0.7
-                filtered_row = beta_file_filtered.loc[filtered_dates[i]][mask]
+                # mask = beta_file_filtered.loc[filtered_dates[i]] < 0.7
+                # filtered_row = beta_file_filtered.loc[filtered_dates[i]][mask]
+
+        #----for filtering top10 lowest beta
+                filtered_row = beta_file_filtered.loc[filtered_dates[i]]
+                filtered_row = filtered_row.sort_values().head(10)
+                print(filtered_row)
+
                 # print(filtered_row)
                 df = df[df.index.isin(filtered_row.index)]
-                first_bouquet = df.index.to_list()
+                # print(df)
+                # first_bouquet = df.index.to_list()
 
             
             else:
@@ -159,9 +187,9 @@ for i in range(0,len(filtered_dates)):
                 df['market_cap'] = df['Outstanding shares']*df['price']
                 if filtered_dates[i] in filtered_dates_first:
                     # print(filtered_dates[i])
+                    
                     df = df.sort_values(by='market_cap', ascending=False).head(10)  #top 10
                     first_bouquet = df.index.to_list()
-
                 else:
                     # print(filtered_dates[i])
                     df = df[df.index.isin(first_bouquet)]
@@ -196,6 +224,8 @@ for i in range(0,len(filtered_dates)):
     # if i==2:
     #     break
 
+    # break
+
 
     
 
@@ -208,4 +238,7 @@ final_df = final_df.round(1)
 print(final_df)
 
 
+# %%
+# print(final_df['top10_stocks_avg_returns'].mean())
+# print(final_df['nifty_returns'].mean())
 # %%
