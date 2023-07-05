@@ -22,56 +22,6 @@ git branch -M master
 git push -u origin master
 
 ==================================================================
-Task
-1- Webscaping using Selenium
-2- common drive
-
-
-C:\keshav\Navneet\Options_data\NIFTY & BANKNIFTY (Jan 2020 to 19 Dec 2022)\NIFTY & BANKNIFTY Options (Jan 2020 to 19 Dec 2022)\2022\BANKNIFTY Options
-
-===========================================================================
-
-DATAFRAME
-d = {
-    'm1': [10,1,7,6],
-    'm2': [7,1,17,16],
-    'm3': [5,3,7,9],
-    'm4': [0,2,4,8]
-}
-
-d
-
-my_df = pd.DataFrame(d)
-print(my_df)
-
-np.where((my_df['m1']<my_df['m2']) | (my_df['m1']<my_df['m3']) ,1,0)
-
-
-===================================
-import pandas as pd
-
-# Creating a sample DataFrame
-data = {'Column1': ['Value1', 'Value2', None, 'Value4'],
-        'Column2': ['Value5', 'Value6', 'NaN', 'Value8']}
-df = pd.DataFrame(data)
-
-print(df)
-
-  Column1 Column2
-0  Value1  Value5
-1  Value2  Value6
-2    None     NaN
-3  Value4  Value8
-
-=====================================================================
-import numpy as np
-import pandas as pd
-df = pd.DataFrame(
-  np.random.randint(30, size=(5,6)),
-  columns = list("ABCDEF")
-)
-df.insert(0, "Cat", ["A","A","B","A","B"])
-df
 
 
 

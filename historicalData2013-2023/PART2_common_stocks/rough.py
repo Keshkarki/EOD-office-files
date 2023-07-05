@@ -11,7 +11,7 @@ import warnings
 
 pd.set_option('display.width', 1000)
 warnings.simplefilter(action='ignore', category=FutureWarning)
-pd.set_option('display.max_rows',None)
+# pd.set_option('display.max_rows',None)
 
 
 
@@ -23,7 +23,7 @@ master_df = pd.read_csv("C:\\keshav\\50stocks_performance\\master_file2.csv", pa
 beta_file = pd.read_excel("C:\\keshav\\historicalData2013-2023\\Beta_nifty.xlsx",sheet_name='Beta1', header=1, parse_dates=['Date'], index_col='Date')
 beta_file = beta_file.round(1)
 
-
+#common ticker file
 nifty_df = pd.read_excel("C:\\keshav\\historicalData2013-2023\\PART2_common_stocks\\common_ticker_exel.xlsx", sheet_name='outstanding_shares', usecols=['all_companies', 'Outstanding shares'], index_col='all_companies')
 
 
@@ -48,7 +48,6 @@ beta_value = 0.7
 
 period = input(f"Please choose from [yearly,quarterly, monthly, custom]  : ")
 
-
 if period == "custom":
     input_custom_days = int(input('Please choose custom days : '))
 
@@ -66,17 +65,11 @@ filtered_daily = [i for i in master_df.index]
 
 #%% MAKING BINS --> annual, quarterly, monthly, custom
 filtered_yearly = []
-# Iterate over each year from the start date until the end year
 for year in range(start_date.year, end_date.year + 1):
     # Create a timestamp for March 31 of the current year
     target_date = pd.Timestamp(year=year, month=3, day=31)
-
-    # Find the closest date before March 31 in the master dataframe index
-    # closest_date = max(filter(lambda x: x <= target_date, master_df.index))
     closest_date = master_df.index[master_df.index <= target_date].max()
-
     filtered_yearly.append(closest_date)
-
 
 
 
@@ -90,9 +83,6 @@ for date in monthly_dates:
     filtered_monthly.append(closest_date)
 
 
-
-
-
 #%% Qurterly 
 quarterly_dates = pd.date_range(start=start_date, end=end_date, freq='Q')
 filtered_quarterly = []
@@ -101,11 +91,6 @@ filtered_quarterly = []
 for date in quarterly_dates:
     closest_date = master_df.index[master_df.index <= date].max()
     filtered_quarterly.append(closest_date)
-
-
-
-
-
 
 
 #%% custom dates 
@@ -118,13 +103,7 @@ for date in custom_dates:
     filtered_custom.append(closest_date)
 
 
-
-
-
-
 #%%  #MAKING  filtered_dates single function for all variables
-if period == 'daily':
-    filtered_dates = filtered_daily  #@for portfolio
 
 if period == 'yearly':
     filtered_dates = filtered_yearly
@@ -139,7 +118,6 @@ elif period == 'custom':
     filtered_dates = filtered_custom
 
 
-
 # betadates fitered
 try:
     beta_file_filtered = beta_file.loc[filtered_dates]
@@ -148,26 +126,17 @@ except:
     pass
 
 
-
-
-
-#%% LOOP PART CAPTURING DETAILS AND INSERTING IN DICTIONARIES
+#%% ========================= LOOP PART CAPTURING DETAILS AND INSERTING IN DICTIONARIES ==============================
 main_dict = {}
 nifty_dict = {}
 capital = 100000000
 no_of_stocks = 5
-
-portfolio_dates = []
-portfolio_values= []
 portfolio = pd.DataFrame(columns  = ['Date', 'portfolio_values'])
 
-
-
 for i in range(len(filtered_dates)):
-    # print(filtered_dates[i])
+    print(filtered_dates[i])
     try:
         
-
         if filtered_dates[i].year == 2018:
             df = stocks_2018
 
@@ -185,10 +154,9 @@ for i in range(len(filtered_dates)):
 
         if filtered_dates[i].year == 2023:
             df = stocks_2023
-
-
             
         df = nifty_df.copy()
+
         for company in df.index:
             value = master_df.loc[filtered_dates[i],company]
             df.loc[company,'price'] = value
@@ -196,9 +164,7 @@ for i in range(len(filtered_dates)):
             #for next year
             value2 = master_df.loc[filtered_dates[i+1], company]
             df.loc[company,'next_year_price'] = value2
-
-
- 
+            
 
         if filter_mode == "beta":
     #----- for filtering based on below criteria
@@ -210,7 +176,6 @@ for i in range(len(filtered_dates)):
             filtered_row = filtered_row.sort_values().head(no_of_stocks)
             df = df[df.index.isin(filtered_row.index)]
             df_companies = df.index
-
 
             #DATES BETWEEN MONTH --------------------
             daily_dates_between = [timestamp for timestamp in filtered_daily if filtered_dates[i] <= timestamp < filtered_dates[i+1]]
@@ -251,8 +216,6 @@ for i in range(len(filtered_dates)):
                 # print(date,capital)
 
                 portfolio = portfolio.append({'Date': date, 'portfolio_values': capital}, ignore_index=True)
-
-            
 
         if filter_mode == 'market_cap':
             df['market_cap'] = df['Outstanding shares']*df['price']
@@ -304,17 +267,11 @@ for i in range(len(filtered_dates)):
                 # print(date,capital)
 
                 portfolio = portfolio.append({'Date': date, 'portfolio_values': capital}, ignore_index=True)
-
-
                 # # print(df2)
-
-
-
 
         df['return'] = df['next_year_price']/df['price']*100 -100
         df = df['return'].mean()
         main_dict[filtered_dates[i]] = df
-
 
         #also for nifty
         #creating every time within loop
@@ -333,13 +290,13 @@ for i in range(len(filtered_dates)):
     except:
         pass
 
-    # if i == 3:
-    #     break
+    if i == 3:
+        break
 
 print(portfolio)
 
 #%% PRINT PORTFOLIO
-portfolio.to_csv('portfolio33.csv')
+# portfolio.to_csv('portfolio33.csv')
 
 
 #%% # Assuming the dictionary with returns is stored in the variable 'returns_dict'
